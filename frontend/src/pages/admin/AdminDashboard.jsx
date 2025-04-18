@@ -51,7 +51,7 @@ function AdminDashboard() {
                     <h2 className="text-xl font-semibold mb-4">Paramètres système</h2>
                     <p className="text-gray-600 mb-4">Configurer les paramètres de l'application.</p>
                     <Link to="/admin/settings" className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 inline-block">
-                        Accéder aux paramètres
+                        Pas Disponnible
                     </Link>
                 </div>
             </div>
