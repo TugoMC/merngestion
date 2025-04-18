@@ -10,6 +10,9 @@ import ProductList from './pages/products/ProductList';
 import CreateProduct from './pages/products/CreateProduct';
 import EditProduct from './pages/products/EditProduct';
 import ProductDetails from './pages/products/ProductDetails';
+import OrderList from './pages/orders/OrderList';
+import CreateOrder from './pages/orders/CreateOrder';
+import OrderDetails from './pages/orders/OrderDetails';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import UserList from './pages/admin/users/UserList';
 import CreateUser from './pages/admin/users/CreateUser';
@@ -39,6 +42,11 @@ function App() {
           <Route path="/products/create" element={<ProtectedRoute><CreateProduct /></ProtectedRoute>} />
           <Route path="/products/edit/:id" element={<ProtectedRoute><EditProduct /></ProtectedRoute>} />
           <Route path="/products/:id" element={<ProtectedRoute><ProductDetails /></ProtectedRoute>} />
+
+          {/* Routes protégées - Commandes */}
+          <Route path="/orders" element={<ProtectedRoute><OrderList /></ProtectedRoute>} />
+          <Route path="/orders/create" element={<ProtectedRoute><CreateOrder /></ProtectedRoute>} />
+          <Route path="/orders/:id" element={<ProtectedRoute><OrderDetails /></ProtectedRoute>} />
 
           {/* Routes d'administration */}
           <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />

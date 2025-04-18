@@ -6,6 +6,8 @@ import mongoose from 'mongoose';
 import userRoutes from './routes/gestionUser/user.route.js';
 import employeeRoutes from './routes/gestionEmploye/employee.route.js';
 import productRoutes from './routes/gestionStock/product.route.js';
+import orderRoutes from './routes/gestionVentes/order.route.js';
+
 
 // Charger les variables d'environnement depuis le fichier .env
 dotenv.config();
@@ -33,6 +35,9 @@ app.use('/api/employees', employeeRoutes);
 
 // Routes de gestion des stocks
 app.use('/api/products', productRoutes);
+
+// Routes de gestion des commandes
+app.use('/api/orders', orderRoutes);
 
 // Connexion à MongoDB
 mongoose.connect(process.env.MONGO_URI)
