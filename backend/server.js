@@ -7,7 +7,8 @@ import userRoutes from './routes/gestionUser/user.route.js';
 import employeeRoutes from './routes/gestionEmploye/employee.route.js';
 import productRoutes from './routes/gestionStock/product.route.js';
 import orderRoutes from './routes/gestionVentes/order.route.js';
-
+import dashboardRoutes from './routes/admin/dashboard.route.js';
+import publicDashboardRoutes from './routes/admin/dashboard.route.js';
 
 // Charger les variables d'environnement depuis le fichier .env
 dotenv.config();
@@ -24,6 +25,9 @@ app.use(cors({
 // Middleware pour parser les données JSON
 app.use(express.json());
 
+// Routes publiques (sans authentification)
+app.use('/api/public', publicDashboardRoutes);
+
 // Routes d'authentification
 app.use('/api/auth', userRoutes);
 
@@ -38,6 +42,9 @@ app.use('/api/products', productRoutes);
 
 // Routes de gestion des commandes
 app.use('/api/orders', orderRoutes);
+
+// Routes du tableau de bord administratif
+app.use('/api/dashboard', dashboardRoutes);
 
 // Connexion à MongoDB
 mongoose.connect(process.env.MONGO_URI)
