@@ -7,7 +7,6 @@ function Navbar() {
     const { user, logout } = useAuth();
     const [apiStatus, setApiStatus] = useState('checking');
 
-    // Vérifier l'état de la connexion au backend
     useEffect(() => {
         const verifyApiStatus = async () => {
             try {
@@ -24,7 +23,6 @@ function Navbar() {
         return () => clearInterval(interval);
     }, []);
 
-    // Rendu de l'indicateur selon l'état de la connexion
     const renderApiStatus = () => {
         if (apiStatus === 'checking') {
             return <span className="text-yellow-500 text-xs">Vérification API...</span>;
@@ -41,21 +39,18 @@ function Navbar() {
                 <div className="flex items-center justify-between h-16">
                     <div className="flex items-center">
                         <div className="flex-shrink-0">
-                            <Link to="/" className="text-white font-bold text-xl">Mon App</Link>
+                            <Link to="/" className="text-white font-bold text-xl">Gestion Entreprise</Link>
                         </div>
                         <div className="hidden md:block">
                             <div className="ml-10 flex items-baseline space-x-4">
                                 <Link to="/" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                                     Accueil
                                 </Link>
-                                {user && user.role === 'admin' && (
+                                {user?.role === 'admin' && (
                                     <Link to="/admin" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                                         Administration
                                     </Link>
                                 )}
-                                <div className="px-3 py-2">
-                                    {renderApiStatus()}
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -70,6 +65,9 @@ function Navbar() {
                                     >
                                         Déconnexion
                                     </button>
+                                    <div className="px-3 py-2">
+                                        {renderApiStatus()}
+                                    </div>
                                 </div>
                             ) : (
                                 <div className="flex items-center space-x-4">
@@ -79,6 +77,9 @@ function Navbar() {
                                     <Link to="/register" className="bg-blue-600 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700">
                                         Inscription
                                     </Link>
+                                    <div className="px-3 py-2">
+                                        {renderApiStatus()}
+                                    </div>
                                 </div>
                             )}
                         </div>

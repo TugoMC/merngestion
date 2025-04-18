@@ -1,7 +1,14 @@
 import { Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import HomePage from './pages/HomePage';
+import EmployeeList from './pages/employees/EmployeeList';
+import CreateEmployee from './pages/employees/CreateEmployee';
+import EditEmployee from './pages/employees/EditEmployee';
+import EmployeeDetails from './pages/employees/EmployeeDetails';
+import AdminDashboard from './pages/admin/AdminDashboard';
 import Navbar from './components/Navbar';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -11,7 +18,16 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/" element={<h1 className="text-2xl font-bold text-center my-8">Bienvenue sur l'application</h1>} />
+          <Route path="/" element={<HomePage />} />
+
+          {/* Routes protégées */}
+          <Route path="/employees" element={<ProtectedRoute><EmployeeList /></ProtectedRoute>} />
+          <Route path="/employees/create" element={<ProtectedRoute><CreateEmployee /></ProtectedRoute>} />
+          <Route path="/employees/edit/:id" element={<ProtectedRoute><EditEmployee /></ProtectedRoute>} />
+          <Route path="/employees/:id" element={<ProtectedRoute><EmployeeDetails /></ProtectedRoute>} />
+
+          {/* Route d'administration */}
+          <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
         </Routes>
       </div>
     </div>

@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import userRoutes from './routes/gestionUser/user.route.js';
+import employeeRoutes from './routes/gestionEmploye/employee.route.js'
 
 // Charger les variables d'environnement depuis le fichier .env
 dotenv.config();
@@ -23,6 +24,8 @@ app.use(express.json());
 // Routes d'authentification
 app.use('/api/auth', userRoutes);
 
+// Routes de gestion des employés
+app.use('/api/employees', employeeRoutes);
 // Connexion à MongoDB
 mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('Connexion à MongoDB réussie !'))

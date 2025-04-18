@@ -7,6 +7,15 @@ const api = axios.create({
     withCredentials: true, // pour gérer les cookies
 });
 
+// Intercepteur pour ajouter le token JWT à chaque requête
+api.interceptors.request.use(config => {
+    const token = localStorage.getItem('token');
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+});
+
 // Fonction pour vérifier l'état de l'API
 export const checkApiStatus = async () => {
     try {
