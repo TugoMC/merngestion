@@ -6,6 +6,10 @@ import EmployeeList from './pages/employees/EmployeeList';
 import CreateEmployee from './pages/employees/CreateEmployee';
 import EditEmployee from './pages/employees/EditEmployee';
 import EmployeeDetails from './pages/employees/EmployeeDetails';
+import ProductList from './pages/products/ProductList';
+import CreateProduct from './pages/products/CreateProduct';
+import EditProduct from './pages/products/EditProduct';
+import ProductDetails from './pages/products/ProductDetails';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import UserList from './pages/admin/users/UserList';
 import CreateUser from './pages/admin/users/CreateUser';
@@ -29,6 +33,12 @@ function App() {
           <Route path="/employees/create" element={<ProtectedRoute><CreateEmployee /></ProtectedRoute>} />
           <Route path="/employees/edit/:id" element={<ProtectedRoute><EditEmployee /></ProtectedRoute>} />
           <Route path="/employees/:id" element={<ProtectedRoute><EmployeeDetails /></ProtectedRoute>} />
+
+          {/* Routes protégées - Produits */}
+          <Route path="/products" element={<ProtectedRoute><ProductList /></ProtectedRoute>} />
+          <Route path="/products/create" element={<ProtectedRoute><CreateProduct /></ProtectedRoute>} />
+          <Route path="/products/edit/:id" element={<ProtectedRoute><EditProduct /></ProtectedRoute>} />
+          <Route path="/products/:id" element={<ProtectedRoute><ProductDetails /></ProtectedRoute>} />
 
           {/* Routes d'administration */}
           <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
