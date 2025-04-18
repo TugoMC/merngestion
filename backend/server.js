@@ -6,6 +6,7 @@ import mongoose from 'mongoose';
 import userRoutes from './routes/gestionUser/user.route.js';
 import employeeRoutes from './routes/gestionEmploye/employee.route.js'
 
+
 // Charger les variables d'environnement depuis le fichier .env
 dotenv.config();
 
@@ -23,6 +24,9 @@ app.use(express.json());
 
 // Routes d'authentification
 app.use('/api/auth', userRoutes);
+
+// Routes de gestion des utilisateurs
+app.use('/api/users', userRoutes);
 
 // Routes de gestion des employés
 app.use('/api/employees', employeeRoutes);
