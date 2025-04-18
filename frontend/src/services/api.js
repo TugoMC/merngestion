@@ -1,0 +1,21 @@
+import axios from 'axios';
+
+const API_URL = 'http://localhost:5000';
+
+const api = axios.create({
+    baseURL: API_URL,
+    withCredentials: true, // pour gérer les cookies
+});
+
+// Fonction pour vérifier l'état de l'API
+export const checkApiStatus = async () => {
+    try {
+        const response = await api.get('/api/health');
+        return response.data.status === 'ok';
+    } catch (error) {
+        console.error('API health check failed:', error);
+        return false;
+    }
+};
+
+export default api;
