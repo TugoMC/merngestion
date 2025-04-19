@@ -18,7 +18,7 @@ const app = express();
 
 // Middleware pour gérer les CORS avec configuration spécifique
 app.use(cors({
-    origin: 'http://localhost:5173', // Remplacer par l'URL de votre frontend
+    origin: 'https://merngestion-frontend.onrender.com', // Remplacer par l'URL de votre frontend
     credentials: true // Nécessaire pour les cookies
 }));
 
