@@ -19,7 +19,7 @@ const HomePage = () => {
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/public/dashboard');
+                const response = await axios.get('https://merngestion-backend.onrender.com/api/public/dashboard');
                 setDashboardData(response.data);
             } catch (err) {
                 console.error('Erreur lors de la récupération des données du tableau de bord:', err);
