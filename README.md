@@ -75,8 +75,8 @@ Pour installer et exécuter le backend, suivez ces étapes :
 
 1. Clonez le dépôt :
 ```bash
-git clone https://github.com/votre-username/system-gestion-entreprise.git
-cd system-gestion-entreprise/backend
+git clone https://github.com/TugoMC/merngestion
+cd merngestion/backend
 ```
 
 2. Installez les dépendances :
@@ -87,7 +87,7 @@ npm install
 3. Créez un fichier `.env` à la racine du dossier backend avec les variables suivantes :
 ```
 PORT=5000
-MONGO_URI=mongodb://localhost:27017/gestion-entreprise
+MONGO_URI=votre_uri
 JWT_SECRET=votre_clef_secrete_jwt
 ```
 
