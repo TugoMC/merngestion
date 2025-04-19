@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import api from '../../../services/api';
 import { useAuth } from '../../../context/AuthContext';
-import { Navigate } from 'react-router-dom';
 
 function UserDetails() {
     const { id } = useParams();
@@ -12,9 +11,23 @@ function UserDetails() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Redirection si l'utilisateur n'est pas admin
     if (!user || user.role !== 'admin') {
-        return <Navigate to="/" replace />;
+        return (
+            <div className="max-w-2xl mx-auto p-6">
+                <div className="bg-orange-50 border-l-4 border-orange-500 text-gray-700 p-4 rounded">
+                    <p className="font-bold">Accès refusé</p>
+                    <p>Vous devez être administrateur pour accéder à cette page.</p>
+                </div>
+                <div className="mt-4">
+                    <button
+                        onClick={() => navigate('/')}
+                        className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600"
+                    >
+                        Retour à l'accueil
+                    </button>
+                </div>
+            </div>
+        );
     }
 
     useEffect(() => {
@@ -45,58 +58,79 @@ function UserDetails() {
         }
     };
 
-    if (loading) return <div className="text-center py-10">Chargement...</div>;
-    if (error) return <div className="text-center text-red-600 py-10">{error}</div>;
-    if (!userData) return <div className="text-center py-10">Utilisateur non trouvé</div>;
+    if (loading) return <div className="text-center py-8">Chargement...</div>;
+    if (error) return (
+        <div className="max-w-2xl mx-auto p-6">
+            <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded">{error}</div>
+            <div className="mt-4">
+                <button
+                    onClick={() => navigate('/admin/users')}
+                    className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600"
+                >
+                    Retour à la liste
+                </button>
+            </div>
+        </div>
+    );
+    if (!userData) return (
+        <div className="max-w-2xl mx-auto p-6">
+            <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 rounded">Utilisateur non trouvé</div>
+            <div className="mt-4">
+                <button
+                    onClick={() => navigate('/admin/users')}
+                    className="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600"
+                >
+                    Retour à la liste
+                </button>
+            </div>
+        </div>
+    );
 
     return (
-        <div className="px-4 py-6 max-w-2xl mx-auto">
+        <div className="max-w-2xl mx-auto p-6">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold">Détails de l'utilisateur</h1>
-                <div>
-                    <Link to="/admin/users" className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 mr-2">
+                <h1 className="text-2xl font-bold text-gray-800">Détails de l'utilisateur</h1>
+                <div className="flex space-x-2">
+                    <Link to="/admin/users" className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors">
                         Retour
                     </Link>
-                    <Link to={`/admin/users/edit/${id}`} className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mr-2">
+                    <Link to={`/admin/users/edit/${id}`} className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors">
                         Modifier
                     </Link>
                     <button
                         onClick={handleDelete}
-                        className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-                        disabled={id === user?.id} // Empêche la suppression de son propre compte
+                        className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+                        disabled={id === user?.id}
                     >
                         Supprimer
                     </button>
                 </div>
             </div>
 
-            <div className="bg-white shadow-md rounded-lg p-6">
-                <div className="mb-4">
-                    <h2 className="text-lg font-semibold text-gray-700">Informations personnelles</h2>
-                    <div className="mt-2 grid grid-cols-2 gap-4">
-                        <div>
-                            <p className="text-sm text-gray-500">Nom</p>
-                            <p className="text-gray-900">{userData.name}</p>
-                        </div>
-                        <div>
-                            <p className="text-sm text-gray-500">Email</p>
-                            <p className="text-gray-900">{userData.email}</p>
-                        </div>
-                        <div>
-                            <p className="text-sm text-gray-500">Rôle</p>
-                            <p className="text-gray-900">
-                                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${userData.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'
-                                    }`}>
-                                    {userData.role}
-                                </span>
-                            </p>
-                        </div>
-                        <div>
-                            <p className="text-sm text-gray-500">Date de création</p>
-                            <p className="text-gray-900">
-                                {new Date(userData.createdAt).toLocaleDateString()}
-                            </p>
-                        </div>
+            <div className="bg-white p-6 rounded-lg shadow-md">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 className="text-sm font-medium text-gray-500">Nom</h3>
+                        <p className="mt-2 text-gray-800">{userData.name}</p>
+                    </div>
+                    <div>
+                        <h3 className="text-sm font-medium text-gray-500">Email</h3>
+                        <p className="mt-2 text-gray-800">{userData.email}</p>
+                    </div>
+                    <div>
+                        <h3 className="text-sm font-medium text-gray-500">Rôle</h3>
+                        <p className="mt-2">
+                            <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${userData.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'
+                                }`}>
+                                {userData.role}
+                            </span>
+                        </p>
+                    </div>
+                    <div>
+                        <h3 className="text-sm font-medium text-gray-500">Date de création</h3>
+                        <p className="mt-2 text-gray-800">
+                            {new Date(userData.createdAt).toLocaleDateString()}
+                        </p>
                     </div>
                 </div>
             </div>

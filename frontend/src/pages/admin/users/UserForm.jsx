@@ -58,6 +58,11 @@ function UserForm({ userId, isEdit = false }) {
             return;
         }
 
+        if (isEdit && formData.password && formData.password !== formData.confirmPassword) {
+            setError('Les mots de passe ne correspondent pas');
+            return;
+        }
+
         try {
             // Création ou mise à jour selon le mode
             if (isEdit) {
@@ -83,110 +88,110 @@ function UserForm({ userId, isEdit = false }) {
         }
     };
 
-    if (loading) return <div className="text-center py-10">Chargement...</div>;
+    if (loading) return <div className="text-center py-8">Chargement...</div>;
 
     return (
-        <div className="px-4 py-6 max-w-2xl mx-auto">
-            <h1 className="text-2xl font-bold mb-6">
+        <div className="max-w-2xl mx-auto p-6">
+            <h1 className="text-2xl font-bold mb-6 text-gray-800">
                 {isEdit ? 'Modifier l\'utilisateur' : 'Créer un nouvel utilisateur'}
             </h1>
 
             {error && (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4" role="alert">
+                <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded mb-6" role="alert">
                     <p>{error}</p>
                 </div>
             )}
 
-            <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-lg p-6">
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
-                        Nom complet
-                    </label>
-                    <input
-                        type="text"
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        required
-                    />
+            <form onSubmit={handleSubmit} className="space-y-6 bg-white p-6 rounded-lg shadow-md">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label className="block text-sm font-medium mb-2 text-gray-600" htmlFor="name">
+                            Nom complet
+                        </label>
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium mb-2 text-gray-600" htmlFor="email">
+                            Email
+                        </label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                            required
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium mb-2 text-gray-600" htmlFor="password">
+                            Mot de passe {isEdit && '(laisser vide pour ne pas modifier)'}
+                        </label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                            required={!isEdit}
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium mb-2 text-gray-600" htmlFor="confirmPassword">
+                            Confirmer le mot de passe
+                        </label>
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            name="confirmPassword"
+                            value={formData.confirmPassword}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                            required={!isEdit || formData.password !== ''}
+                        />
+                    </div>
+
+                    <div>
+                        <label className="block text-sm font-medium mb-2 text-gray-600" htmlFor="role">
+                            Rôle
+                        </label>
+                        <select
+                            id="role"
+                            name="role"
+                            value={formData.role}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+                        >
+                            <option value="employe">Employé</option>
+                            <option value="admin">Administrateur</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
-                        Email
-                    </label>
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        required
-                    />
-                </div>
-
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
-                        Mot de passe {isEdit && '(laisser vide pour ne pas modifier)'}
-                    </label>
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        required={!isEdit}
-                    />
-                </div>
-
-                <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="confirmPassword">
-                        Confirmer le mot de passe
-                    </label>
-                    <input
-                        type="password"
-                        id="confirmPassword"
-                        name="confirmPassword"
-                        value={formData.confirmPassword}
-                        onChange={handleChange}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        required={!isEdit || formData.password !== ''}
-                    />
-                </div>
-
-                <div className="mb-6">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="role">
-                        Rôle
-                    </label>
-                    <select
-                        id="role"
-                        name="role"
-                        value={formData.role}
-                        onChange={handleChange}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    >
-                        <option value="employe">Employé</option>
-                        <option value="admin">Administrateur</option>
-                    </select>
-                </div>
-
-                <div className="flex items-center justify-between">
-                    <button
-                        type="submit"
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                    >
-                        {isEdit ? 'Mettre à jour' : 'Créer'}
-                    </button>
+                <div className="flex justify-end space-x-4 mt-6">
                     <button
                         type="button"
                         onClick={() => navigate('/admin/users')}
-                        className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                        className="px-6 py-2 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors"
                     >
                         Annuler
+                    </button>
+                    <button
+                        type="submit"
+                        className="px-6 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors"
+                    >
+                        {isEdit ? 'Mettre à jour' : 'Enregistrer'}
                     </button>
                 </div>
             </form>

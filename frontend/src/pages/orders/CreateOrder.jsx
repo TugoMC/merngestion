@@ -150,16 +150,8 @@ function CreateOrder() {
     };
 
     return (
-        <div className="container mx-auto px-4 py-8">
-            <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold">Créer une nouvelle commande</h1>
-                <button
-                    onClick={() => navigate('/orders')}
-                    className="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300"
-                >
-                    Retour
-                </button>
-            </div>
+        <div className="max-w-2xl mx-auto p-6">
+            <h1 className="text-2xl font-bold mb-6 text-gray-800">Créer une nouvelle commande</h1>
 
             {success && (
                 <div className="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-6" role="alert">
@@ -179,7 +171,7 @@ function CreateOrder() {
                     <h2 className="text-lg font-semibold mb-4">Informations client</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium mb-1" htmlFor="customerName">
+                            <label className="block text-sm font-medium mb-2 text-gray-600" htmlFor="customerName">
                                 Nom <span className="text-red-500">*</span>
                             </label>
                             <input
@@ -188,12 +180,12 @@ function CreateOrder() {
                                 name="name"
                                 value={formData.customer.name}
                                 onChange={handleCustomerChange}
-                                className="w-full border rounded px-3 py-2"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
                                 required
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium mb-1" htmlFor="customerEmail">
+                            <label className="block text-sm font-medium mb-2 text-gray-600" htmlFor="customerEmail">
                                 Email <span className="text-red-500">*</span>
                             </label>
                             <input
@@ -202,12 +194,12 @@ function CreateOrder() {
                                 name="email"
                                 value={formData.customer.email}
                                 onChange={handleCustomerChange}
-                                className="w-full border rounded px-3 py-2"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
                                 required
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium mb-1" htmlFor="customerAddress">
+                            <label className="block text-sm font-medium mb-2 text-gray-600" htmlFor="customerAddress">
                                 Adresse <span className="text-red-500">*</span>
                             </label>
                             <input
@@ -216,12 +208,12 @@ function CreateOrder() {
                                 name="address"
                                 value={formData.customer.address}
                                 onChange={handleCustomerChange}
-                                className="w-full border rounded px-3 py-2"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
                                 required
                             />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium mb-1" htmlFor="customerPhone">
+                            <label className="block text-sm font-medium mb-2 text-gray-600" htmlFor="customerPhone">
                                 Téléphone
                             </label>
                             <input
@@ -230,7 +222,7 @@ function CreateOrder() {
                                 name="phone"
                                 value={formData.customer.phone}
                                 onChange={handleCustomerChange}
-                                className="w-full border rounded px-3 py-2"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
                             />
                         </div>
                     </div>
@@ -241,7 +233,7 @@ function CreateOrder() {
                     <h2 className="text-lg font-semibold mb-4">Ajouter des produits</h2>
                     <div className="flex flex-wrap gap-4 items-end mb-4">
                         <div className="flex-1">
-                            <label className="block text-sm font-medium mb-1" htmlFor="productSelect">
+                            <label className="block text-sm font-medium mb-2 text-gray-600" htmlFor="productSelect">
                                 Produit
                             </label>
                             <select
@@ -249,7 +241,7 @@ function CreateOrder() {
                                 name="product"
                                 value={currentItem.product}
                                 onChange={handleItemChange}
-                                className="w-full border rounded px-3 py-2"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
                             >
                                 <option value="">Sélectionner un produit</option>
                                 {products.map(product => (
@@ -260,7 +252,7 @@ function CreateOrder() {
                             </select>
                         </div>
                         <div className="w-24">
-                            <label className="block text-sm font-medium mb-1" htmlFor="quantity">
+                            <label className="block text-sm font-medium mb-2 text-gray-600" htmlFor="quantity">
                                 Quantité
                             </label>
                             <input
@@ -270,13 +262,13 @@ function CreateOrder() {
                                 min="1"
                                 value={currentItem.quantity}
                                 onChange={handleItemChange}
-                                className="w-full border rounded px-3 py-2"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
                             />
                         </div>
                         <button
                             type="button"
                             onClick={addItemToOrder}
-                            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                            className="bg-orange-500 text-white px-4 py-2 rounded-md hover:bg-orange-600 transition-colors"
                             disabled={!currentItem.product}
                         >
                             Ajouter
@@ -289,18 +281,18 @@ function CreateOrder() {
                             <table className="min-w-full">
                                 <thead className="bg-gray-50">
                                     <tr>
-                                        <th className="px-4 py-2 text-left">Produit</th>
-                                        <th className="px-4 py-2 text-right">Prix unitaire</th>
-                                        <th className="px-4 py-2 text-right">Quantité</th>
-                                        <th className="px-4 py-2 text-right">Total</th>
-                                        <th className="px-4 py-2 text-center">Action</th>
+                                        <th className="px-4 py-2 text-left text-gray-600 font-medium">Produit</th>
+                                        <th className="px-4 py-2 text-right text-gray-600 font-medium">Prix unitaire</th>
+                                        <th className="px-4 py-2 text-right text-gray-600 font-medium">Quantité</th>
+                                        <th className="px-4 py-2 text-right text-gray-600 font-medium">Total</th>
+                                        <th className="px-4 py-2 text-center text-gray-600 font-medium">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-200">
                                     {formData.items.map((item, index) => {
                                         const product = products.find(p => p._id === item.product);
                                         return (
-                                            <tr key={index}>
+                                            <tr key={index} className="hover:bg-gray-50">
                                                 <td className="px-4 py-3">{product ? product.name : 'Produit inconnu'}</td>
                                                 <td className="px-4 py-3 text-right">{product ? product.price.toFixed(2) : '0.00'} FCFA</td>
                                                 <td className="px-4 py-3 text-right">{item.quantity}</td>
@@ -339,7 +331,7 @@ function CreateOrder() {
                     <h2 className="text-lg font-semibold mb-4">Options de paiement</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-sm font-medium mb-1" htmlFor="paymentMethod">
+                            <label className="block text-sm font-medium mb-2 text-gray-600" htmlFor="paymentMethod">
                                 Mode de paiement
                             </label>
                             <select
@@ -347,7 +339,7 @@ function CreateOrder() {
                                 name="paymentMethod"
                                 value={formData.paymentMethod}
                                 onChange={(e) => setFormData({ ...formData, paymentMethod: e.target.value })}
-                                className="w-full border rounded px-3 py-2"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
                             >
                                 <option value="cash">Espèces</option>
                                 <option value="credit_card">Carte bancaire</option>
@@ -355,7 +347,7 @@ function CreateOrder() {
                             </select>
                         </div>
                         <div>
-                            <label className="block text-sm font-medium mb-1" htmlFor="notes">
+                            <label className="block text-sm font-medium mb-2 text-gray-600" htmlFor="notes">
                                 Notes
                             </label>
                             <textarea
@@ -363,7 +355,7 @@ function CreateOrder() {
                                 name="notes"
                                 value={formData.notes}
                                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                                className="w-full border rounded px-3 py-2"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
                                 rows="3"
                             ></textarea>
                         </div>
@@ -375,13 +367,13 @@ function CreateOrder() {
                     <button
                         type="button"
                         onClick={() => navigate('/orders')}
-                        className="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300"
+                        className="px-6 py-2 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors"
                     >
                         Annuler
                     </button>
                     <button
                         type="submit"
-                        className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
+                        className="px-6 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors"
                         disabled={loading}
                     >
                         {loading ? 'Création en cours...' : 'Créer la commande'}

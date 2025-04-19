@@ -7,6 +7,7 @@ function Navbar() {
     const { user, logout } = useAuth();
     const [apiStatus, setApiStatus] = useState('checking');
 
+    // Safer API status check with error handling
     useEffect(() => {
         const verifyApiStatus = async () => {
             try {
@@ -34,55 +35,78 @@ function Navbar() {
     };
 
     return (
-        <nav className="bg-gray-800 shadow-md">
+        <nav className="bg-white shadow-md">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
-                    <div className="flex items-center">
-                        <div className="flex-shrink-0">
-                            <Link to="/" className="text-white font-bold text-xl">Gestion Entreprise</Link>
-                        </div>
-                        <div className="hidden md:block">
-                            <div className="ml-10 flex items-baseline space-x-4">
-                                <Link to="/" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                                    Accueil
-                                </Link>
-                                {user?.role === 'admin' && (
-                                    <Link to="/admin" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                                        Administration
-                                    </Link>
-                                )}
-                            </div>
-                        </div>
+                    {/* Logo */}
+                    <div className="flex-shrink-0">
+                        <Link to="/" className="text-orange-500 font-bold text-2xl">
+                            Gestion<span className="text-orange-400">.</span>
+                        </Link>
                     </div>
-                    <div className="hidden md:block">
-                        <div className="ml-4 flex items-center md:ml-6">
-                            {user ? (
-                                <div className="flex items-center space-x-4">
-                                    <span className="text-gray-300 text-sm">{user.name || user.email}</span>
-                                    <button
-                                        onClick={logout}
-                                        className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-                                    >
-                                        Déconnexion
-                                    </button>
-                                    <div className="px-3 py-2">
-                                        {renderApiStatus()}
-                                    </div>
-                                </div>
-                            ) : (
-                                <div className="flex items-center space-x-4">
-                                    <Link to="/login" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
-                                        Connexion
-                                    </Link>
-                                    <Link to="/register" className="bg-blue-600 text-white px-3 py-2 rounded-md text-sm font-medium hover:bg-blue-700">
-                                        Inscription
-                                    </Link>
-                                    <div className="px-3 py-2">
-                                        {renderApiStatus()}
-                                    </div>
-                                </div>
-                            )}
+
+                    {/* Navigation Links */}
+                    <div className="hidden md:flex space-x-6">
+                        <Link to="/" className="text-gray-600 hover:text-gray-900">
+                            home
+                        </Link>
+                        {user && (
+                            <>
+
+                                <Link to="/admin/users" className="text-gray-600 hover:text-gray-900">
+                                    users
+                                </Link>
+
+                                <Link to="/employees" className="text-gray-600 hover:text-gray-900">
+                                    employees
+                                </Link>
+                                <Link to="/products" className="text-gray-600 hover:text-gray-900">
+                                    products
+                                </Link>
+                                <Link to="/orders" className="text-gray-600 hover:text-gray-900">
+                                    orders
+                                </Link>
+                            </>
+                        )}
+                        {user && user.role === 'admin' && (
+                            <Link to="/admin" className="text-gray-600 hover:text-gray-900">
+                                admin
+                            </Link>
+                        )}
+
+                    </div>
+
+                    {/* Right Side - Auth & API Status */}
+                    <div className="flex items-center space-x-4">
+                        {/* API Status Indicator */}
+                        <div className="px-3 py-1 bg-gray-100 rounded-md">
+                            {renderApiStatus()}
                         </div>
+
+                        {/* Auth Buttons */}
+                        {user ? (
+                            <div className="flex items-center space-x-4">
+                                {/* User Profile Text */}
+                                <span className="text-gray-600 text-sm hidden md:block">
+                                    {user.name || user.email}
+                                </span>
+                                <button
+                                    onClick={logout}
+                                    className="text-gray-600 hover:text-gray-900 text-sm font-medium"
+                                >
+                                    Déconnexion
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="flex items-center space-x-4">
+                                <Link to="/login" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
+                                    Connexion
+                                </Link>
+                                <Link to="/register" className="bg-orange-500 text-white px-4 py-1 rounded-md hover:bg-orange-600 text-sm transition-colors">
+                                    Inscription
+                                </Link>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

@@ -1,50 +1,47 @@
-// src/pages/orders/OrderDetails.jsx
+// OrderDetails.jsx
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { getOrderById, updateOrderStatus, updatePaymentStatus, generateInvoice, getInvoiceDownloadUrl } from '../../services/orderService';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { getOrderById, updateOrderStatus, updatePaymentStatus, generateInvoice } from '../../services/orderService';
 
 function OrderDetails() {
-    const { id } = useParams();
-    const navigate = useNavigate();
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const { id } = useParams();
+    const navigate = useNavigate();
 
     useEffect(() => {
+        const fetchOrderDetails = async () => {
+            try {
+                const data = await getOrderById(id);
+                setOrder(data);
+                setLoading(false);
+            } catch (err) {
+                console.error("Erreur lors du chargement de la commande:", err);
+                setError('Erreur lors du chargement des détails de la commande');
+                navigate('/orders');
+            }
+        };
         fetchOrderDetails();
-    }, [id]);
-
-    const fetchOrderDetails = async () => {
-        try {
-            setLoading(true);
-            const data = await getOrderById(id);
-            setOrder(data);
-            setError(null);
-        } catch (err) {
-            setError('Erreur lors du chargement des détails de la commande');
-            console.error(err);
-        } finally {
-            setLoading(false);
-        }
-    };
+    }, [id, navigate]);
 
     const handleStatusChange = async (newStatus) => {
         try {
             await updateOrderStatus(id, newStatus);
-            fetchOrderDetails(); // Rafraîchir les détails
+            const data = await getOrderById(id);
+            setOrder(data);
         } catch (err) {
-            console.error('Erreur lors de la mise à jour du statut:', err);
-            alert('Erreur lors de la mise à jour du statut');
+            alert(err.response?.data?.message || "Erreur lors de la mise à jour du statut");
         }
     };
 
     const handlePaymentStatusChange = async (newStatus) => {
         try {
             await updatePaymentStatus(id, newStatus);
-            fetchOrderDetails(); // Rafraîchir les détails
+            const data = await getOrderById(id);
+            setOrder(data);
         } catch (err) {
-            console.error('Erreur lors de la mise à jour du statut de paiement:', err);
-            alert('Erreur lors de la mise à jour du statut de paiement');
+            alert(err.response?.data?.message || "Erreur lors de la mise à jour du statut de paiement");
         }
     };
 
@@ -52,8 +49,8 @@ function OrderDetails() {
         try {
             await generateInvoice(id);
 
-            // Au lieu d'ouvrir dans un nouvel onglet, télécharger directement
-            const token = localStorage.getItem('authToken'); // Ou d'où vous stockez votre token
+            // Téléchargement de la facture
+            const token = localStorage.getItem('authToken');
             const response = await fetch(`/api/orders/${id}/invoice/download`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -64,7 +61,6 @@ function OrderDetails() {
                 throw new Error('Erreur lors du téléchargement');
             }
 
-            // Créer un blob et le télécharger
             const blob = await response.blob();
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -74,10 +70,8 @@ function OrderDetails() {
             a.click();
             window.URL.revokeObjectURL(url);
             document.body.removeChild(a);
-
         } catch (err) {
-            console.error('Erreur lors de la génération ou téléchargement de la facture:', err);
-            alert('Erreur lors de la génération ou téléchargement de la facture');
+            alert("Erreur lors de la génération ou téléchargement de la facture");
         }
     };
 
@@ -123,74 +117,97 @@ function OrderDetails() {
         }
     };
 
-    if (loading) return <div className="text-center py-10">Chargement des détails...</div>;
-    if (error) return <div className="text-center py-10 text-red-600">{error}</div>;
-    if (!order) return <div className="text-center py-10">Commande non trouvée</div>;
+    if (loading) return <div className="text-center py-8">Chargement...</div>;
+
+    if (error) return <div className="text-center py-8">Commande non trouvée</div>;
 
     return (
-        <div className="container mx-auto px-4 py-8">
+        <div className="max-w-2xl mx-auto p-6">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold">Détails de la commande</h1>
-                <div className="space-x-2">
-                    <button
-                        onClick={() => navigate('/orders')}
-                        className="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300"
-                    >
+                <h1 className="text-2xl font-bold text-gray-800">Détails de la commande</h1>
+                <div className="flex space-x-2">
+                    <Link to="/orders" className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors">
                         Retour
-                    </button>
+                    </Link>
                     <button
                         onClick={handleGenerateInvoice}
-                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
                     >
                         Télécharger la Facture
                     </button>
                 </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div className="bg-white p-6 rounded-lg shadow-md mb-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <h2 className="text-lg font-semibold mb-4">Informations de commande</h2>
-                        <div className="space-y-2">
-                            <p><span className="font-medium">N° Facture:</span> {order.invoiceNumber}</p>
-                            <p><span className="font-medium">Date:</span> {formatDate(order.createdAt)}</p>
-                            <p><span className="font-medium">Montant total:</span> {order.totalAmount.toFixed(2)} FCFA</p>
-                            <p>
-                                <span className="font-medium">Statut:</span>
-                                <span className={`ml-2 px-3 py-1 rounded-full text-xs ${getStatusClass(order.status)}`}>
-                                    {translateStatus(order.status)}
-                                </span>
-                            </p>
-                            <p>
-                                <span className="font-medium">Moyen de paiement:</span> {translatePaymentMethod(order.paymentMethod)}
-                            </p>
-                            <p>
-                                <span className="font-medium">Statut du paiement:</span>
-                                <span className={`ml-2 px-3 py-1 rounded-full text-xs ${order.paymentStatus === 'paid' ? 'bg-green-100 text-green-800' :
+                        <h3 className="text-sm font-medium text-gray-500">N° Facture</h3>
+                        <p className="mt-2 text-gray-800">{order.invoiceNumber}</p>
+                    </div>
+                    <div>
+                        <h3 className="text-sm font-medium text-gray-500">Date</h3>
+                        <p className="mt-2 text-gray-800">{formatDate(order.createdAt)}</p>
+                    </div>
+                    <div>
+                        <h3 className="text-sm font-medium text-gray-500">Montant total</h3>
+                        <p className="mt-2 text-gray-800">{order.totalAmount.toFixed(2)} FCFA</p>
+                    </div>
+                    <div>
+                        <h3 className="text-sm font-medium text-gray-500">Statut</h3>
+                        <p className="mt-2">
+                            <span className={`px-3 py-1 rounded-full text-xs ${getStatusClass(order.status)}`}>
+                                {translateStatus(order.status)}
+                            </span>
+                        </p>
+                    </div>
+                    <div>
+                        <h3 className="text-sm font-medium text-gray-500">Moyen de paiement</h3>
+                        <p className="mt-2 text-gray-800">{translatePaymentMethod(order.paymentMethod)}</p>
+                    </div>
+                    <div>
+                        <h3 className="text-sm font-medium text-gray-500">Statut du paiement</h3>
+                        <p className="mt-2">
+                            <span className={`px-3 py-1 rounded-full text-xs ${order.paymentStatus === 'paid' ? 'bg-green-100 text-green-800' :
                                     order.paymentStatus === 'refunded' ? 'bg-red-100 text-red-800' :
                                         'bg-yellow-100 text-yellow-800'
-                                    }`}>
-                                    {order.paymentStatus === 'paid' ? 'Payé' :
-                                        order.paymentStatus === 'refunded' ? 'Remboursé' : 'En attente'}
-                                </span>
-                            </p>
-                            {order.notes && <p><span className="font-medium">Notes:</span> {order.notes}</p>}
-                        </div>
+                                }`}>
+                                {order.paymentStatus === 'paid' ? 'Payé' :
+                                    order.paymentStatus === 'refunded' ? 'Remboursé' : 'En attente'}
+                            </span>
+                        </p>
                     </div>
-
-                    <div>
-                        <h2 className="text-lg font-semibold mb-4">Informations client</h2>
-                        <div className="space-y-2">
-                            <p><span className="font-medium">Nom:</span> {order.customer.name}</p>
-                            <p><span className="font-medium">Email:</span> {order.customer.email}</p>
-                            <p><span className="font-medium">Adresse:</span> {order.customer.address}</p>
-                            <p><span className="font-medium">Téléphone:</span> {order.customer.phone || 'Non spécifié'}</p>
+                    {order.notes && (
+                        <div>
+                            <h3 className="text-sm font-medium text-gray-500">Notes</h3>
+                            <p className="mt-2 text-gray-800">{order.notes}</p>
                         </div>
+                    )}
+                </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+                <h2 className="text-lg font-semibold mb-4">Informations client</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h3 className="text-sm font-medium text-gray-500">Nom</h3>
+                        <p className="mt-2 text-gray-800">{order.customer.name}</p>
+                    </div>
+                    <div>
+                        <h3 className="text-sm font-medium text-gray-500">Email</h3>
+                        <p className="mt-2 text-gray-800">{order.customer.email}</p>
+                    </div>
+                    <div>
+                        <h3 className="text-sm font-medium text-gray-500">Adresse</h3>
+                        <p className="mt-2 text-gray-800">{order.customer.address}</p>
+                    </div>
+                    <div>
+                        <h3 className="text-sm font-medium text-gray-500">Téléphone</h3>
+                        <p className="mt-2 text-gray-800">{order.customer.phone || 'Non spécifié'}</p>
                     </div>
                 </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div className="bg-white p-6 rounded-lg shadow-md mb-6">
                 <h2 className="text-lg font-semibold mb-4">Articles commandés</h2>
                 <div className="overflow-x-auto">
                     <table className="min-w-full">
@@ -222,15 +239,15 @@ function OrderDetails() {
                 </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div className="bg-white p-6 rounded-lg shadow-md">
                 <h2 className="text-lg font-semibold mb-4">Mettre à jour le statut</h2>
-                <div className="flex flex-wrap gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label className="block text-sm font-medium mb-1">Statut de la commande</label>
+                        <h3 className="text-sm font-medium text-gray-500">Statut de la commande</h3>
                         <select
                             value={order.status}
                             onChange={(e) => handleStatusChange(e.target.value)}
-                            className="border rounded px-3 py-2 w-full"
+                            className="mt-2 border rounded px-3 py-2 w-full"
                         >
                             <option value="pending">En attente</option>
                             <option value="processing">En traitement</option>
@@ -239,13 +256,12 @@ function OrderDetails() {
                             <option value="cancelled">Annulée</option>
                         </select>
                     </div>
-
                     <div>
-                        <label className="block text-sm font-medium mb-1">Statut du paiement</label>
+                        <h3 className="text-sm font-medium text-gray-500">Statut du paiement</h3>
                         <select
                             value={order.paymentStatus}
                             onChange={(e) => handlePaymentStatusChange(e.target.value)}
-                            className="border rounded px-3 py-2 w-full"
+                            className="mt-2 border rounded px-3 py-2 w-full"
                         >
                             <option value="pending">En attente</option>
                             <option value="paid">Payé</option>

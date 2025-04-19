@@ -13,14 +13,12 @@ const HomePage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    // Couleurs pour les graphiques
-    const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'];
+    // Couleurs pour les graphiques avec la palette de Tomato
+    const COLORS = ['#FF6347', '#FF8C69', '#FFA07A', '#FFD700', '#20B2AA', '#87CEFA'];
 
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
-                // Pas besoin de vérifier si l'utilisateur est connecté
-                // Utiliser un endpoint public pour les données du tableau de bord
                 const response = await axios.get('http://localhost:5000/api/public/dashboard');
                 setDashboardData(response.data);
             } catch (err) {
@@ -32,7 +30,7 @@ const HomePage = () => {
         };
 
         fetchDashboardData();
-    }, []); // Retiré la dépendance à l'utilisateur
+    }, []);
 
     // Préparer les données pour les graphiques
     const prepareSalesChartData = () => {
@@ -67,212 +65,172 @@ const HomePage = () => {
     if (error) return <div className="text-red-500 text-center p-4">{error}</div>;
 
     return (
-        <div className="px-4 pb-8">
-            <h1 className="text-2xl font-bold mb-6">Tableau de bord</h1>
+        <div className="px-4 py-8">
+            <div className="max-w-7xl mx-auto">
+                <h1 className="text-3xl font-bold mb-6 text-gray-800">Tableau de bord</h1>
 
-            {/* Message d'information de connexion */}
-            <div className="bg-blue-100 border-l-4 border-blue-500 text-blue-700 p-4 mb-6 rounded">
-                <p>Cette page est publique et accessible par tous. Connectez-vous avec ces identifiants pour agir sur le tableau:</p>
-                <p className="font-medium mt-1">Email: admin@example.com | Mot de passe: admin123</p>
-            </div>
-
-            {/* Cartes de statistiques */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                <StatCard
-                    title="Ventes totales"
-                    value={dashboardData?.sales?.totalSales?.toLocaleString('fr-FR') + ' FCFA'}
-                    icon={<DollarSign className="text-green-500" />}
-                />
-                <StatCard
-                    title="Commandes"
-                    value={dashboardData?.sales?.totalOrders}
-                    icon={<ShoppingCart className="text-blue-500" />}
-                />
-                <StatCard
-                    title="Produits"
-                    value={dashboardData?.products?.totalProducts}
-                    icon={<Package className="text-purple-500" />}
-                />
-                <StatCard
-                    title="Employés"
-                    value={dashboardData?.employees?.totalEmployees}
-                    icon={<Users className="text-orange-500" />}
-                />
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                {/* Graphique des ventes des 7 derniers jours */}
-                <div className="bg-white p-4 rounded-lg shadow">
-                    <h2 className="text-lg font-semibold mb-4">Ventes des 7 derniers jours</h2>
-                    <ResponsiveContainer width="100%" height={300}>
-                        <LineChart data={prepareSalesChartData()}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="date" />
-                            <YAxis yAxisId="left" />
-                            <YAxis yAxisId="right" orientation="right" />
-                            <Tooltip />
-                            <Legend />
-                            <Line
-                                yAxisId="left"
-                                type="monotone"
-                                dataKey="montant"
-                                name="Montant (FCFA)"
-                                stroke="#8884d8"
-                                activeDot={{ r: 8 }}
-                            />
-                            <Line
-                                yAxisId="right"
-                                type="monotone"
-                                dataKey="commandes"
-                                name="Commandes"
-                                stroke="#82ca9d"
-                            />
-                        </LineChart>
-                    </ResponsiveContainer>
+                {/* Message d'information de connexion */}
+                <div className="bg-blue-50 border-l-4 border-orange-500 text-gray-700 p-4 mb-8 rounded">
+                    <p>Cette page est publique et accessible par tous. Connectez-vous avec ces identifiants pour agir sur le tableau:</p>
+                    <p className="font-medium mt-1">Email: admin@example.com | Mot de passe: admin123</p>
                 </div>
 
-                {/* Commandes par statut */}
-                <div className="bg-white p-4 rounded-lg shadow">
-                    <h2 className="text-lg font-semibold mb-4">Commandes par statut</h2>
-                    <ResponsiveContainer width="100%" height={300}>
-                        <BarChart data={Object.entries(dashboardData?.sales?.ordersByStatus || {}).map(([status, count]) => ({
-                            status, count
-                        }))}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="status" />
-                            <YAxis />
-                            <Tooltip />
-                            <Legend />
-                            <Bar dataKey="count" name="Nombre de commandes" fill="#8884d8" />
-                        </BarChart>
-                    </ResponsiveContainer>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-                {/* Produits par catégorie */}
-                <div className="bg-white p-4 rounded-lg shadow">
-                    <h2 className="text-lg font-semibold mb-4">Produits par catégorie</h2>
-                    <ResponsiveContainer width="100%" height={250}>
-                        <PieChart>
-                            <Pie
-                                data={prepareProductCategoryData()}
-                                cx="50%"
-                                cy="50%"
-                                labelLine={false}
-                                outerRadius={80}
-                                fill="#8884d8"
-                                dataKey="value"
-                                nameKey="name"
-                                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                            >
-                                {prepareProductCategoryData().map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                ))}
-                            </Pie>
-                            <Tooltip />
-                            <Legend />
-                        </PieChart>
-                    </ResponsiveContainer>
+                {/* Cartes de statistiques */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <StatCard
+                        title="Ventes totales"
+                        value={dashboardData?.sales?.totalSales?.toLocaleString('fr-FR') + ' FCFA'}
+                        icon={<DollarSign className="text-orange-500" size={24} />}
+                    />
+                    <StatCard
+                        title="Commandes"
+                        value={dashboardData?.sales?.totalOrders}
+                        icon={<ShoppingCart className="text-orange-500" size={24} />}
+                    />
+                    <StatCard
+                        title="Produits"
+                        value={dashboardData?.products?.totalProducts}
+                        icon={<Package className="text-orange-500" size={24} />}
+                    />
+                    <StatCard
+                        title="Employés"
+                        value={dashboardData?.employees?.totalEmployees}
+                        icon={<Users className="text-orange-500" size={24} />}
+                    />
                 </div>
 
-                {/* Employés par département */}
-                <div className="bg-white p-4 rounded-lg shadow">
-                    <h2 className="text-lg font-semibold mb-4">Employés par département</h2>
-                    <ResponsiveContainer width="100%" height={250}>
-                        <PieChart>
-                            <Pie
-                                data={prepareEmployeeDepartmentData()}
-                                cx="50%"
-                                cy="50%"
-                                labelLine={false}
-                                outerRadius={80}
-                                fill="#8884d8"
-                                dataKey="value"
-                                nameKey="name"
-                                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                            >
-                                {prepareEmployeeDepartmentData().map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                ))}
-                            </Pie>
-                            <Tooltip />
-                            <Legend />
-                        </PieChart>
-                    </ResponsiveContainer>
-                </div>
-
-                {/* Utilisateurs par rôle */}
-                <div className="bg-white p-4 rounded-lg shadow">
-                    <h2 className="text-lg font-semibold mb-4">Utilisateurs par rôle</h2>
-                    <ResponsiveContainer width="100%" height={250}>
-                        <PieChart>
-                            <Pie
-                                data={Object.entries(dashboardData?.users?.usersByRole || {}).map(([role, count]) => ({
-                                    name: role,
-                                    value: count
-                                }))}
-                                cx="50%"
-                                cy="50%"
-                                labelLine={false}
-                                outerRadius={80}
-                                fill="#8884d8"
-                                dataKey="value"
-                                nameKey="name"
-                                label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                            >
-                                {Object.entries(dashboardData?.users?.usersByRole || {}).map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                                ))}
-                            </Pie>
-                            <Tooltip />
-                            <Legend />
-                        </PieChart>
-                    </ResponsiveContainer>
-                </div>
-            </div>
-
-            {/* Alertes et notifications */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Produits à faible stock */}
-                <div className="bg-white p-4 rounded-lg shadow">
-                    <h2 className="text-lg font-semibold mb-4 flex items-center">
-                        <AlertTriangle className="mr-2 text-amber-500" size={20} />
-                        Produits à faible stock
-                    </h2>
-                    <div className="flex items-center justify-between mb-2">
-                        <span>Nombre de produits à faible stock:</span>
-                        <span className="font-semibold text-amber-500">{dashboardData?.products?.lowStockCount || 0}</span>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                    {/* Graphique des ventes des 7 derniers jours */}
+                    <div className="bg-white p-6 rounded-lg shadow">
+                        <h2 className="text-xl font-semibold mb-6">Ventes des 7 derniers jours</h2>
+                        <ResponsiveContainer width="100%" height={300}>
+                            <LineChart data={prepareSalesChartData()}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#f5f5f5" />
+                                <XAxis dataKey="date" tick={{ fill: '#666' }} />
+                                <YAxis yAxisId="left" tick={{ fill: '#666' }} />
+                                <YAxis yAxisId="right" orientation="right" tick={{ fill: '#666' }} />
+                                <Tooltip contentStyle={{ borderRadius: '8px' }} />
+                                <Legend wrapperStyle={{ paddingTop: '10px' }} />
+                                <Line
+                                    yAxisId="left"
+                                    type="monotone"
+                                    dataKey="montant"
+                                    name="Montant (FCFA)"
+                                    stroke="#FF6347"
+                                    strokeWidth={2}
+                                    activeDot={{ r: 8 }}
+                                />
+                                <Line
+                                    yAxisId="right"
+                                    type="monotone"
+                                    dataKey="commandes"
+                                    name="Commandes"
+                                    stroke="#20B2AA"
+                                    strokeWidth={2}
+                                />
+                            </LineChart>
+                        </ResponsiveContainer>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2.5">
-                        <div
-                            className="bg-amber-500 h-2.5 rounded-full"
-                            style={{ width: `${dashboardData?.products?.lowStockPercentage || 0}%` }}
-                        ></div>
-                    </div>
-                    <div className="text-sm text-gray-500 mt-1">
-                        {(dashboardData?.products?.lowStockPercentage || 0).toFixed(1)}% du stock total
+
+                    {/* Commandes par statut */}
+                    <div className="bg-white p-6 rounded-lg shadow">
+                        <h2 className="text-xl font-semibold mb-6">Commandes par statut</h2>
+                        <ResponsiveContainer width="100%" height={300}>
+                            <BarChart data={Object.entries(dashboardData?.sales?.ordersByStatus || {}).map(([status, count]) => ({
+                                status, count
+                            }))}>
+                                <CartesianGrid strokeDasharray="3 3" stroke="#f5f5f5" />
+                                <XAxis dataKey="status" tick={{ fill: '#666' }} />
+                                <YAxis tick={{ fill: '#666' }} />
+                                <Tooltip contentStyle={{ borderRadius: '8px' }} />
+                                <Legend wrapperStyle={{ paddingTop: '10px' }} />
+                                <Bar dataKey="count" name="Nombre de commandes" fill="#FF6347" radius={[4, 4, 0, 0]} />
+                            </BarChart>
+                        </ResponsiveContainer>
                     </div>
                 </div>
 
-                {/* Nouveaux utilisateurs et employés */}
-                <div className="bg-white p-4 rounded-lg shadow">
-                    <h2 className="text-lg font-semibold mb-4">Nouveaux arrivants (30 derniers jours)</h2>
-                    <div className="flex justify-between items-center mb-4">
-                        <div className="flex items-center">
-                            <ArrowUpCircle className="mr-2 text-green-500" size={20} />
-                            <div>
-                                <p className="font-semibold">{dashboardData?.users?.newUsers || 0} nouveaux utilisateurs</p>
-                                <p className="text-sm text-gray-500">enregistrés sur la plateforme</p>
-                            </div>
-                        </div>
-                        <div className="flex items-center">
-                            <ArrowUpCircle className="mr-2 text-blue-500" size={20} />
-                            <div>
-                                <p className="font-semibold">{dashboardData?.employees?.newEmployees || 0} nouveaux employés</p>
-                                <p className="text-sm text-gray-500">ajoutés à l'entreprise</p>
-                            </div>
-                        </div>
+                {/* Graphiques en camembert */}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+                    {/* Produits par catégorie */}
+                    <div className="bg-white p-6 rounded-lg shadow">
+                        <h2 className="text-xl font-semibold mb-6">Produits par catégorie</h2>
+                        <ResponsiveContainer width="100%" height={250}>
+                            <PieChart>
+                                <Pie
+                                    data={prepareProductCategoryData()}
+                                    cx="50%"
+                                    cy="50%"
+                                    labelLine={false}
+                                    outerRadius={80}
+                                    fill="#8884d8"
+                                    dataKey="value"
+                                    nameKey="name"
+                                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                                >
+                                    {prepareProductCategoryData().map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                    ))}
+                                </Pie>
+                                <Tooltip contentStyle={{ borderRadius: '8px' }} />
+                                <Legend wrapperStyle={{ paddingTop: '20px' }} />
+                            </PieChart>
+                        </ResponsiveContainer>
+                    </div>
+
+                    {/* Employés par département */}
+                    <div className="bg-white p-6 rounded-lg shadow">
+                        <h2 className="text-xl font-semibold mb-6">Employés par département</h2>
+                        <ResponsiveContainer width="100%" height={250}>
+                            <PieChart>
+                                <Pie
+                                    data={prepareEmployeeDepartmentData()}
+                                    cx="50%"
+                                    cy="50%"
+                                    labelLine={false}
+                                    outerRadius={80}
+                                    fill="#8884d8"
+                                    dataKey="value"
+                                    nameKey="name"
+                                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                                >
+                                    {prepareEmployeeDepartmentData().map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                    ))}
+                                </Pie>
+                                <Tooltip contentStyle={{ borderRadius: '8px' }} />
+                                <Legend wrapperStyle={{ paddingTop: '20px' }} />
+                            </PieChart>
+                        </ResponsiveContainer>
+                    </div>
+
+                    {/* Utilisateurs par rôle */}
+                    <div className="bg-white p-6 rounded-lg shadow">
+                        <h2 className="text-xl font-semibold mb-6">Utilisateurs par rôle</h2>
+                        <ResponsiveContainer width="100%" height={250}>
+                            <PieChart>
+                                <Pie
+                                    data={Object.entries(dashboardData?.users?.usersByRole || {}).map(([role, count]) => ({
+                                        name: role,
+                                        value: count
+                                    }))}
+                                    cx="50%"
+                                    cy="50%"
+                                    labelLine={false}
+                                    outerRadius={80}
+                                    fill="#8884d8"
+                                    dataKey="value"
+                                    nameKey="name"
+                                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                                >
+                                    {Object.entries(dashboardData?.users?.usersByRole || {}).map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                    ))}
+                                </Pie>
+                                <Tooltip contentStyle={{ borderRadius: '8px' }} />
+                                <Legend wrapperStyle={{ paddingTop: '20px' }} />
+                            </PieChart>
+                        </ResponsiveContainer>
                     </div>
                 </div>
             </div>
@@ -281,26 +239,14 @@ const HomePage = () => {
 };
 
 // Composant pour afficher une carte de statistique
-const StatCard = ({ title, value, icon, trend }) => {
+const StatCard = ({ title, value, icon }) => {
     return (
-        <div className="bg-white p-4 rounded-lg shadow">
-            <div className="flex justify-between items-center mb-2">
-                <h3 className="text-gray-500 font-medium">{title}</h3>
+        <div className="bg-white p-6 rounded-lg shadow">
+            <div className="flex justify-between items-center mb-4">
+                <h3 className="text-gray-600 font-medium">{title}</h3>
                 {icon}
             </div>
-            <p className="text-2xl font-bold">{value}</p>
-            {trend && (
-                <div className="flex items-center mt-2">
-                    {trend.direction === 'up' ? (
-                        <ArrowUpCircle className="text-green-500 mr-1" size={16} />
-                    ) : (
-                        <ArrowDownCircle className="text-red-500 mr-1" size={16} />
-                    )}
-                    <span className={trend.direction === 'up' ? 'text-green-500' : 'text-red-500'}>
-                        {trend.value}%
-                    </span>
-                </div>
-            )}
+            <p className="text-3xl font-bold text-gray-800">{value}</p>
         </div>
     );
 };

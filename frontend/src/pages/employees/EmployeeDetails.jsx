@@ -1,3 +1,4 @@
+// EmployeeDetails.jsx
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import api from '../../services/api';
@@ -38,19 +39,19 @@ function EmployeeDetails() {
     if (!employee) return <div className="text-center py-8">Employé non trouvé</div>;
 
     return (
-        <div className="max-w-2xl mx-auto p-4">
+        <div className="max-w-2xl mx-auto p-6">
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold">Détails de l'employé</h1>
+                <h1 className="text-2xl font-bold text-gray-800">Détails de l'employé</h1>
                 <div className="flex space-x-2">
-                    <Link to="/employees" className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-100">
+                    <Link to="/employees" className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-100 transition-colors">
                         Retour
                     </Link>
-                    <Link to={`/employees/edit/${id}`} className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+                    <Link to={`/employees/edit/${id}`} className="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition-colors">
                         Modifier
                     </Link>
                     <button
                         onClick={handleDelete}
-                        className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                        className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
                     >
                         Supprimer
                     </button>
@@ -61,37 +62,37 @@ function EmployeeDetails() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <h3 className="text-sm font-medium text-gray-500">Prénom</h3>
-                        <p className="mt-1">{employee.firstName}</p>
+                        <p className="mt-2 text-gray-800">{employee.firstName}</p>
                     </div>
                     <div>
                         <h3 className="text-sm font-medium text-gray-500">Nom</h3>
-                        <p className="mt-1">{employee.lastName}</p>
+                        <p className="mt-2 text-gray-800">{employee.lastName}</p>
                     </div>
                     <div>
                         <h3 className="text-sm font-medium text-gray-500">Email</h3>
-                        <p className="mt-1">{employee.email}</p>
+                        <p className="mt-2 text-gray-800">{employee.email}</p>
                     </div>
                     <div>
                         <h3 className="text-sm font-medium text-gray-500">Téléphone</h3>
-                        <p className="mt-1">{employee.phone || 'Non renseigné'}</p>
+                        <p className="mt-2 text-gray-800">{employee.phone || 'Non renseigné'}</p>
                     </div>
                     <div>
                         <h3 className="text-sm font-medium text-gray-500">Poste</h3>
-                        <p className="mt-1">{employee.position}</p>
+                        <p className="mt-2 text-gray-800">{employee.position}</p>
                     </div>
                     <div>
                         <h3 className="text-sm font-medium text-gray-500">Département</h3>
-                        <p className="mt-1">{employee.department}</p>
+                        <p className="mt-2 text-gray-800">{employee.department}</p>
                     </div>
                     <div>
                         <h3 className="text-sm font-medium text-gray-500">Date d'embauche</h3>
-                        <p className="mt-1">
+                        <p className="mt-2 text-gray-800">
                             {employee.hireDate ? new Date(employee.hireDate).toLocaleDateString() : 'Non renseignée'}
                         </p>
                     </div>
                     <div>
                         <h3 className="text-sm font-medium text-gray-500">Salaire</h3>
-                        <p className="mt-1">
+                        <p className="mt-2 text-gray-800">
                             {employee.salary ? `${employee.salary} FCFA` : 'Non renseigné'}
                         </p>
                     </div>
